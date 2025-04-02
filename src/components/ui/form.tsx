@@ -1,6 +1,7 @@
-import { useForm } from "@tanstack/react-form";
+import { AnyFieldApi, useForm } from "@tanstack/react-form";
 import { Button } from "./button";
 import { Input } from "./input";
+import { z } from "zod";
 
 // TypeScript-like interface for form data
 interface IFormData {
@@ -9,6 +10,23 @@ interface IFormData {
   password: string;
 }
 
+const registerSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+function FieldInfo({ field }: { field: AnyFieldApi }) {
+  return (
+    <>
+      {field.state.meta.isTouched && field.state.meta.errors.length ? (
+        <em className="text-red-500 text-xs">{field.state.meta.errors.map((err) => err.message).join(',')}</em>
+      ) : null}
+    </>
+  )
+}
+
+
 const RegistrationForm = () => {
   const { Field, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -16,6 +34,9 @@ const RegistrationForm = () => {
       email: "",
       password: "",
     } as IFormData,
+    validators: {
+      onChange: registerSchema,
+    },
     onSubmit: async (values) => {
       console.log("Form submitted with values:", values);
     },
@@ -38,11 +59,7 @@ const RegistrationForm = () => {
           e.stopPropagation();
           handleSubmit();
         }}>
-          <Field name="username" validators={{
-            onChange: ({ value }) => {
-              return value.trim() === "" ? "Username is required" : undefined
-            }
-          }}>
+          <Field name="username">
             {
               (field) => (
                 <div className="space-y-2">
@@ -56,20 +73,13 @@ const RegistrationForm = () => {
                     value={field.state.value}
                     onChange={e => field.handleChange(e.target.value)}
                   />
-                  {field.state.meta.errors.length > 0 && (
-                    <em className="text-xs text-red-500">{field.state.meta.errors.join(", ")}</em>
-                  )}
+                  <FieldInfo field={field} />
                 </div>
               )
             }
           </Field>
 
-          <Field name="email" validators={{
-            onChange: ({ value }) => {
-              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-              return !emailRegex.test(value) ? "Invalid email address" : undefined;
-            }
-          }}>
+          <Field name="email">
             {(field) => (
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-gray-700">
@@ -82,16 +92,12 @@ const RegistrationForm = () => {
                   value={field.state.value}
                   onChange={e => field.handleChange(e.target.value)}
                 />
-                {field.state.meta.errors.length > 0 && (
-                  <em className="text-xs text-red-500">{field.state.meta.errors.join(", ")}</em>
-                )}
+                <FieldInfo field={field} />
               </div>
             )}
           </Field>
 
-          <Field name="password" validators={{
-            onChange: ({ value }) => value.length < 8 ? "Password must be at least 8 characters" : undefined
-          }}>
+          <Field name="password">
             {
               (field) => (
                 <div className="space-y-2">
@@ -105,9 +111,7 @@ const RegistrationForm = () => {
                     value={field.state.value}
                     onChange={e => field.handleChange(e.target.value)}
                   />
-                  {field.state.meta.errors.length > 0 && (
-                    <em className="text-xs text-red-500">{field.state.meta.errors.join(", ")}</em>
-                  )}
+                  <FieldInfo field={field} />
                 </div>
               )
             }
