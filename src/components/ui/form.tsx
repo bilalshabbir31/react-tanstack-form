@@ -10,12 +10,11 @@ interface IFormData {
 }
 
 const RegistrationForm = () => {
-  const { Field, handleSubmit } = useForm<IFormData>({
+  const { Field, handleSubmit, reset } = useForm<IFormData>({
     defaultValues: {
       username: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
     onSubmit: async (values) => {
       console.log("Form submitted with values:", values);
@@ -37,7 +36,7 @@ const RegistrationForm = () => {
         <form className="space-y-6" onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          handleSubmit(e);
+          handleSubmit();
         }}>
           <Field name="username" children={(field) => (
             <div className="space-y-2">
@@ -84,9 +83,16 @@ const RegistrationForm = () => {
             </div>
           )}></Field>
 
-          <Button onClick={handleSubmit}>
-            Register
-          </Button>
+          <div className="space-y-2 flex justify-between items-center">
+            <Button variant={"outline"} onClick={() => reset()}>
+              Reset
+            </Button>
+
+            <Button type="submit">
+              Register
+            </Button>
+          </div>
+          
         </form>
       </div>
     </div>
