@@ -38,7 +38,11 @@ const RegistrationForm = () => {
           e.stopPropagation();
           handleSubmit();
         }}>
-          <Field name="username">
+          <Field name="username" validators={{
+            onChange: ({ value }) => {
+              return value.trim() === "" ? "Username is required" : undefined
+            }
+          }}>
             {
               (field) => (
                 <div className="space-y-2">
@@ -52,12 +56,20 @@ const RegistrationForm = () => {
                     value={field.state.value}
                     onChange={e => field.handleChange(e.target.value)}
                   />
+                  {field.state.meta.errors.length > 0 && (
+                    <em className="text-xs text-red-500">{field.state.meta.errors.join(", ")}</em>
+                  )}
                 </div>
               )
             }
           </Field>
 
-          <Field name="email">
+          <Field name="email" validators={{
+            onChange: ({ value }) => {
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              return !emailRegex.test(value) ? "Invalid email address" : undefined;
+            }
+          }}>
             {(field) => (
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-gray-700">
@@ -70,11 +82,16 @@ const RegistrationForm = () => {
                   value={field.state.value}
                   onChange={e => field.handleChange(e.target.value)}
                 />
+                {field.state.meta.errors.length > 0 && (
+                  <em className="text-xs text-red-500">{field.state.meta.errors.join(", ")}</em>
+                )}
               </div>
             )}
           </Field>
 
-          <Field name="password">
+          <Field name="password" validators={{
+            onChange: ({ value }) => value.length < 8 ? "Password must be at least 8 characters" : undefined
+          }}>
             {
               (field) => (
                 <div className="space-y-2">
@@ -88,6 +105,9 @@ const RegistrationForm = () => {
                     value={field.state.value}
                     onChange={e => field.handleChange(e.target.value)}
                   />
+                  {field.state.meta.errors.length > 0 && (
+                    <em className="text-xs text-red-500">{field.state.meta.errors.join(", ")}</em>
+                  )}
                 </div>
               )
             }
