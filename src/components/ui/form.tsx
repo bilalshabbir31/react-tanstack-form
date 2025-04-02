@@ -10,12 +10,12 @@ interface IFormData {
 }
 
 const RegistrationForm = () => {
-  const { Field, handleSubmit, reset } = useForm<IFormData>({
+  const { Field, handleSubmit, reset } = useForm({
     defaultValues: {
       username: "",
       email: "",
       password: "",
-    },
+    } as IFormData,
     onSubmit: async (values) => {
       console.log("Form submitted with values:", values);
     },
@@ -38,50 +38,60 @@ const RegistrationForm = () => {
           e.stopPropagation();
           handleSubmit();
         }}>
-          <Field name="username" children={(field) => (
-            <div className="space-y-2">
-              <label htmlFor="username" className="text-sm font-medium text-gray-700">
-                Username
-              </label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
-                value={field.state.value}
-                onChange={e => field.handleChange(e.target.value)}
-              />
-            </div>
-          )}></Field>
+          <Field name="username">
+            {
+              (field) => (
+                <div className="space-y-2">
+                  <label htmlFor="username" className="text-sm font-medium text-gray-700">
+                    Username
+                  </label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
+                    value={field.state.value}
+                    onChange={e => field.handleChange(e.target.value)}
+                  />
+                </div>
+              )
+            }
+          </Field>
 
-          <Field name="email" children={(field) => (
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={field.state.value}
-                onChange={e => field.handleChange(e.target.value)}
-              />
-            </div>
-          )}></Field>
+          <Field name="email">
+            {(field) => (
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={field.state.value}
+                  onChange={e => field.handleChange(e.target.value)}
+                />
+              </div>
+            )}
+          </Field>
 
-          <Field name="password" children={(field) => (
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={field.state.value}
-                onChange={e => field.handleChange(e.target.value)}
-              />
-            </div>
-          )}></Field>
+          <Field name="password">
+            {
+              (field) => (
+                <div className="space-y-2">
+                  <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={field.state.value}
+                    onChange={e => field.handleChange(e.target.value)}
+                  />
+                </div>
+              )
+            }
+          </Field>
 
           <div className="space-y-2 flex justify-between items-center">
             <Button variant={"outline"} onClick={() => reset()}>
@@ -92,7 +102,6 @@ const RegistrationForm = () => {
               Register
             </Button>
           </div>
-          
         </form>
       </div>
     </div>
